@@ -1,0 +1,70 @@
+#
+# SPDX-FileCopyrightText: 2026 Badge Magic for SailfishOS contributors
+# SPDX-License-Identifier: Apache-2.0
+#
+# Copyright (C) 2026 Badge Magic for SailfishOS contributors
+#
+# Based on the original Badge Magic application by FOSSASIA.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+TARGET = harbour-badgemagic-sailfish
+
+QT += dbus qml quick
+
+CONFIG += link_pkgconfig
+
+CONFIG += sailfishapp c++17
+CONFIG += sailfishapp_i18n
+CONFIG += sailfishapp_i18n_idbased
+CONFIG += sailfishapp_i18n_unfinished
+CONFIG += warn_on
+
+PKGCONFIG += KF5BluezQt
+
+SAILFISHAPP_ICONS += 86x86 108x108 128x128 172x172
+
+SOURCES += \
+    main.cpp \
+    src/badgeapp.cpp \
+    src/badgeblemanager.cpp \
+    src/badgeencoder.cpp \
+    src/badgestore.cpp
+
+HEADERS += \
+    src/badgeapp.h \
+    src/badgeblemanager.h \
+    src/badgeencoder.h \
+    src/badgestore.h
+
+INCLUDEPATH += src
+
+DISTFILES += \
+    harbour-badgemagic-sailfish.desktop \
+    icons/86x86/harbour-badgemagic-sailfish.png \
+    icons/108x108/harbour-badgemagic-sailfish.png \
+    icons/128x128/harbour-badgemagic-sailfish.png \
+    icons/172x172/harbour-badgemagic-sailfish.png \
+    qml/harbour-badgemagic-sailfish.qml \
+    qml/cover/background.png \
+    qml/pages/AboutPage.qml \
+    qml/pages/MainPage.qml \
+    qml/pages/SavedBadgesPage.qml \
+    qml/cover/CoverPage.qml \
+    rpm/harbour-badgemagic-sailfish.spec \
+    translations/harbour-badgemagic-sailfish.ts \
+    README.md
+
+TRANSLATIONS += \
+    translations/harbour-badgemagic-sailfish.ts

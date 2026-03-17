@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+X-Nemo-Application-Type=silica-qt5
+Icon=harbour-badgemagic-sailfish
+Exec=harbour-badgemagic-sailfish
+Name=Badge Magic
+
+[X-Sailjail]
+OrganizationName=org.fossasia
+ApplicationName=BadgeMagicSailfish
+Permissions=Bluetooth

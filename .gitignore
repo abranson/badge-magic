@@ -1,0 +1,10 @@
+/.mb2/
+/build/
+/RPMS/
+/SRPMS/
+/harbour-badgemagic-sailfish
+/Makefile
+/moc_*.cpp
+/*.o
+/documentation.list
+/translations/*.qm
