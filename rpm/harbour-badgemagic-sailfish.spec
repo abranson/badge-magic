@@ -20,6 +20,23 @@ Native SailfishOS front-end for Badge Magic. The application composes text
 badges, stores Badge Magic JSON presets, and transfers the generated payload
 over Bluetooth Low Energy.
 
+# This description section includes metadata for SailfishOS:Chum, see
+# https://github.com/sailfishos-chum/main/blob/main/Metadata.md
+%if 0%{?_chum}
+Title: Badge Magic
+Type: desktop-application
+DeveloperName: Andrew Branson
+Categories:
+ - Utility
+Custom:
+  Repo: https://github.com/abranson/badge-magic
+  DescriptionMD: https://raw.githubusercontent.com/abranson/badge-magic/master/README.md
+PackageIcon: https://raw.githubusercontent.com/abranson/badge-magic/master/icons/172x172/harbour-badgemagic-sailfish.png
+Links:
+  Homepage: https://github.com/abranson/badge-magic
+  Bugtracker: https://github.com/abranson/badge-magic/issues
+%endif
+
 %prep
 %autosetup
 
