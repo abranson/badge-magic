@@ -180,20 +180,12 @@
         <source>There is no badge data to send.</source>
         <translation type="unfinished"></translation>
     </message>
-    <message id="badgemagic-sailfish-la-bluetooth-still-initializing">
-        <source>Bluetooth is still initializing. Please retry in a moment.</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message id="badgemagic-sailfish-la-bluetooth-not-available">
         <source>Bluetooth is not available on this device.</source>
         <translation type="unfinished"></translation>
     </message>
     <message id="badgemagic-sailfish-la-bluetooth-turned-off">
         <source>Bluetooth is turned off. Turn it on and retry.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="badgemagic-sailfish-la-bluetooth-initialization-failed">
-        <source>Bluetooth initialization failed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message id="badgemagic-sailfish-la-connecting-to-badge">
@@ -210,14 +202,6 @@
     </message>
     <message id="badgemagic-sailfish-la-scanning-for-badge">
         <source>Scanning for badge…</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="badgemagic-sailfish-la-discovery-filter-unavailable">
-        <source>Discovery filter unavailable. Scanning all Bluetooth LE devices…</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="badgemagic-sailfish-la-bluetooth-scan-failed">
-        <source>Bluetooth scan failed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message id="badgemagic-sailfish-la-sending-badge-data">
@@ -242,10 +226,6 @@
     </message>
     <message id="badgemagic-sailfish-la-badge-characteristic-not-writable">
         <source>The badge characteristic is not writable.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message id="badgemagic-sailfish-la-bluetooth-transfer-failed">
-        <source>Bluetooth transfer failed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message id="badgemagic-sailfish-la-badge-updated-successfully">

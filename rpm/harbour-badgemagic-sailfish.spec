@@ -2,7 +2,7 @@ Name:       harbour-badgemagic-sailfish
 Summary:    Badge Magic for SailfishOS
 Version:    0.1.0
 Release:    1
-License:    Apache-2.0
+License:    ASL 2.0
 Group:      Qt/Qt
 URL:        https://github.com/abranson/badge-magic
 Source0:    %{name}-%{version}.tar.bz2
@@ -11,7 +11,7 @@ BuildRequires:  pkgconfig(Qt5Core)
 BuildRequires:  pkgconfig(Qt5DBus)
 BuildRequires:  pkgconfig(Qt5Qml)
 BuildRequires:  pkgconfig(Qt5Quick)
-BuildRequires:  pkgconfig(KF5BluezQt)
+BuildRequires:  pkgconfig(Qt5Xml)
 BuildRequires:  pkgconfig(sailfishapp)
 Requires:       sailfishsilica-qt5 >= 0.10.9
 

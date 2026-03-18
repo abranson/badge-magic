@@ -31,9 +31,9 @@ CONFIG += sailfishapp_i18n_idbased
 CONFIG += sailfishapp_i18n_unfinished
 CONFIG += warn_on
 
-PKGCONFIG += KF5BluezQt
-
 SAILFISHAPP_ICONS += 86x86 108x108 128x128 172x172
+
+include(qble/qble.pri)
 
 SOURCES += \
     main.cpp \
@@ -48,7 +48,7 @@ HEADERS += \
     src/badgeencoder.h \
     src/badgestore.h
 
-INCLUDEPATH += src
+INCLUDEPATH += src qble
 
 DISTFILES += \
     harbour-badgemagic-sailfish.desktop \

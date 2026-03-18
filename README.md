@@ -1,6 +1,6 @@
 # Badge Magic for SailfishOS
 
-This repository contains a native SailfishOS application for FOSSASIA LED name badges, built with the SailfishOS SDK, `libsailfishapp`, Sailfish Silica, and BlueZ via `BluezQt`.
+This repository contains a native SailfishOS application for FOSSASIA LED name badges, built with the SailfishOS SDK, `libsailfishapp`, Sailfish Silica, and BlueZ via `qble`.
 
 For more information on the badges and FOSSASIA, see https://badgemagic.fossasia.org/
 
@@ -16,7 +16,7 @@ The SailfishOS version currently covers the core workflow:
 ## Notes
 
 - The desktop entry requests the `Bluetooth` Sailjail permission because BLE is required for badge transfer.
-- The Sailfish backend uses `BluezQt` and the BlueZ D-Bus API.
+- The Sailfish backend uses `qble` and the BlueZ D-Bus API.
 - Saved badge files are stored under the app data directory and use the Badge Magic JSON payload structure for `messages[0].text`, with an extra optional `rawText` field so the Sailfish editor can reload user-entered text.
 
 ## TODO

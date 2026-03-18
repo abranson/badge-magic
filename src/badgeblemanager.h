@@ -22,18 +22,17 @@
 #ifndef BADGEBLEMANAGER_H
 #define BADGEBLEMANAGER_H
 
-#include <BluezQt/Types>
 #include <QObject>
 #include <QByteArray>
 #include <QList>
+#include <QStringList>
+#include <QVariantMap>
+
 QT_FORWARD_DECLARE_CLASS(QTimer)
 
-namespace BluezQt
-{
-class InitManagerJob;
-class Manager;
-class PendingCall;
-}
+class BluezAdapter;
+class QBLEDevice;
+class QBLEService;
 
 class BadgeBleManager : public QObject
 {
@@ -53,39 +52,43 @@ signals:
     void transferFinished();
 
 private slots:
-    void handleManagerInitResult(BluezQt::InitManagerJob *job);
-    void handleDeviceAdded(BluezQt::DevicePtr device);
-    void handleDeviceChanged(BluezQt::DevicePtr device);
-    void handleDeviceConnectedChanged(bool connected);
-    void handleDeviceServicesResolvedChanged(bool resolved);
-    void handleGattServicesChanged(QList<BluezQt::GattServiceRemotePtr> services);
+    void handleScanPollTimeout();
+    void handleScanTimeout();
+    void handleResolveTimeout();
+    void handleDevicePropertiesChanged(const QString &interface,
+                                       const QVariantMap &map,
+                                       const QStringList &list);
+    void handleDeviceError(const QString &message);
 
 private:
     void beginDiscovery();
-    void beginConnection();
-    void attemptResolveCharacteristic();
-    void resetConnection();
-    void setBusy(bool value);
-    void finishWithError(const QString &error);
+    void connectToDevicePath(const QString &devicePath);
+    void attemptResolveService();
     void writeNextChunk();
     void finishTransferSuccessfully();
+    void finishWithError(const QString &error);
+    void resetConnection();
+    void setBusy(bool value);
     void stopDiscovery();
-    bool tryUseDevice(BluezQt::DevicePtr device);
-    bool isBadgeDevice(const BluezQt::DevicePtr &device) const;
+    QString findPoweredAdapterPath(bool *hasAdapter) const;
+    QString findBadgeDevicePath() const;
+    QString findBadgeServicePath() const;
     bool matchesBadgeServiceUuid(const QString &uuid) const;
     bool matchesBadgeCharacteristicUuid(const QString &uuid) const;
 
     bool m_busy = false;
-    bool m_discoveryFiltered = false;
-    bool m_managerReady = false;
     int m_writeIndex = 0;
+    int m_resolveAttempts = 0;
     QList<QByteArray> m_pendingChunks;
+    QString m_adapterPath;
+    QString m_devicePath;
 
-    BluezQt::Manager *m_manager = nullptr;
-    BluezQt::AdapterPtr m_adapter;
-    BluezQt::DevicePtr m_device;
-    BluezQt::GattCharacteristicRemotePtr m_characteristic;
+    BluezAdapter *m_adapter = nullptr;
+    QBLEDevice *m_device = nullptr;
+    QBLEService *m_service = nullptr;
     QTimer *m_scanTimeout = nullptr;
+    QTimer *m_scanPollTimer = nullptr;
+    QTimer *m_resolveTimer = nullptr;
 };
 
 #endif
