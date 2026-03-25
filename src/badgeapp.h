@@ -57,6 +57,7 @@ public:
                                    int modeIndex);
     Q_INVOKABLE QVariantMap loadSavedBadge(int index) const;
     Q_INVOKABLE void sendSavedBadge(int index);
+    Q_INVOKABLE void sendSavedBadgeSlots(const QVariantList &indexes);
     Q_INVOKABLE bool deleteSavedBadge(int index);
 
 signals:

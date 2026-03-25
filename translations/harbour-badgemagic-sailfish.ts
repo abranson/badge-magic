@@ -105,7 +105,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message id="badgemagic-sailfish-la-main-summary">
-        <source>This SailfishOS version covers the core text-badge workflow with native BLE transfer and shared JSON badge presets.</source>
+        <source>This SailfishOS version covers the core text-badge workflow, including multi-message slot transfer from saved badges, with native BLE transfer and shared JSON badge presets.</source>
         <translation type="unfinished"></translation>
     </message>
     <message id="badgemagic-sailfish-la-no-saved-badges">
@@ -232,12 +232,16 @@
         <source>Badge updated successfully.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message id="badgemagic-sailfish-la-writing-badge-data-failed">
+        <source>Writing badge data failed.</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message id="badgemagic-sailfish-la-about-description">
         <source>Badge Magic for SailfishOS is a native SailfishOS port based on the original Badge Magic application by FOSSASIA and its LED badge protocol.</source>
         <translation type="unfinished"></translation>
     </message>
     <message id="badgemagic-sailfish-la-about-protocol">
-        <source>The Sailfish target focuses on composing text badges, saving JSON presets, and sending them over BLE to badges advertising service FEE0 and writable characteristic FEE1.</source>
+        <source>The Sailfish target focuses on composing text badges, saving JSON presets, and sending them over BLE to badges advertising service FEE0 and writable characteristic FEE1. Saved badges can also be transferred together into the badge&apos;s message slots for hardware button cycling.</source>
         <translation type="unfinished"></translation>
     </message>
     <message id="badgemagic-sailfish-la-about-acknowledgements">
@@ -246,6 +250,46 @@
     </message>
     <message id="badgemagic-sailfish-la-about-fossasia-repository">
         <source>FOSSASIA repository: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="badgemagic-sailfish-la-select-saved-badge-slots-before-sending">
+        <source>Select at least one saved badge slot before sending.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="badgemagic-sailfish-la-too-many-saved-badge-slots-selected">
+        <source>You can send up to 8 saved badge slots at once.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="badgemagic-sailfish-la-select-slots">
+        <source>Select slots</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="badgemagic-sailfish-la-send-selected-slots">
+        <source>Send selected slots</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="badgemagic-sailfish-la-clear-slot-selection">
+        <source>Clear slot selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="badgemagic-sailfish-la-add-to-slots">
+        <source>Add to slots</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="badgemagic-sailfish-la-remove-from-slots">
+        <source>Remove from slots</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="badgemagic-sailfish-la-slot-selection-hint">
+        <source>Tap badges to choose up to %1 message slots for button cycling.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="badgemagic-sailfish-la-slot-selection-status">
+        <source>%1 of %2 message slots selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="badgemagic-sailfish-la-slot-number">
+        <source>Slot %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

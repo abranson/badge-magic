@@ -11,6 +11,7 @@ The SailfishOS version currently covers the core workflow:
 - compose text badges
 - choose flash, marquee, speed, and animation mode
 - save and reload badge presets as JSON
+- batch-send up to 8 saved badges as hardware-switchable message slots
 - send the generated payload over BLE to badges exposing service `FEE0` and writable characteristic `FEE1`
 
 ## Notes
@@ -18,6 +19,7 @@ The SailfishOS version currently covers the core workflow:
 - The desktop entry requests the `Bluetooth` Sailjail permission because BLE is required for badge transfer.
 - The Sailfish backend uses `qble` and the BlueZ D-Bus API.
 - Saved badge files are stored under the app data directory and use the Badge Magic JSON payload structure for `messages[0].text`, with an extra optional `rawText` field so the Sailfish editor can reload user-entered text.
+- Message-slot transfers follow the upstream Badge Magic packet format: up to 8 saved presets are packed into one BLE payload, and the badge button cycles through them.
 
 ## TODO
 

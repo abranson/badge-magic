@@ -42,6 +42,7 @@ class BadgeEncoder
 public:
     static QStringList encodeText(const QString &text);
     static QList<QByteArray> buildTransferChunks(const BadgeMessage &message);
+    static QList<QByteArray> buildTransferChunks(const QList<BadgeMessage> &messages);
 
     static QString speedLabel(int speedIndex);
     static QString modeLabel(int modeIndex);
@@ -51,10 +52,11 @@ public:
     static int modeIndexFromHex(const QString &hexValue);
 
 private:
-    static QString getFlash(const BadgeMessage &message);
-    static QString getMarquee(const BadgeMessage &message);
-    static QString getOptions(const BadgeMessage &message);
-    static QString getSize(const BadgeMessage &message);
+    static QString getFlash(const QList<BadgeMessage> &messages);
+    static QString getMarquee(const QList<BadgeMessage> &messages);
+    static QString getOptions(const QList<BadgeMessage> &messages);
+    static QString getSizes(const QList<BadgeMessage> &messages);
+    static QString getMessage(const QList<BadgeMessage> &messages);
     static QString getTime();
     static QString fillZeros(int length);
 };

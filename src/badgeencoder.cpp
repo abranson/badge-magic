@@ -28,6 +28,7 @@
 namespace {
 
 constexpr int kPacketByteSize = 16;
+constexpr int kMaxMessages = 8;
 constexpr int kModeLabelCount = 9;
 const char kPacketStart[] = "77616E670000";
 
@@ -192,15 +193,25 @@ QStringList BadgeEncoder::encodeText(const QString &text)
 
 QList<QByteArray> BadgeEncoder::buildTransferChunks(const BadgeMessage &message)
 {
+    return buildTransferChunks(QList<BadgeMessage>{message});
+}
+
+QList<QByteArray> BadgeEncoder::buildTransferChunks(const QList<BadgeMessage> &messages)
+{
+    if (messages.isEmpty()) {
+        return {};
+    }
+
+    const QList<BadgeMessage> payloadMessages = messages.mid(0, kMaxMessages);
     QString payload = QString::fromLatin1(kPacketStart)
-            + getFlash(message)
-            + getMarquee(message)
-            + getOptions(message)
-            + getSize(message)
+            + getFlash(payloadMessages)
+            + getMarquee(payloadMessages)
+            + getOptions(payloadMessages)
+            + getSizes(payloadMessages)
             + QStringLiteral("000000000000")
             + getTime()
             + QStringLiteral("0000000000000000000000000000000000000000")
-            + message.textHex.join(QString());
+            + getMessage(payloadMessages);
 
     payload.append(fillZeros(payload.length()));
 
@@ -279,35 +290,66 @@ int BadgeEncoder::modeIndexFromHex(const QString &hexValue)
     return index >= 0 ? index : 0;
 }
 
-QString BadgeEncoder::getFlash(const BadgeMessage &message)
+QString BadgeEncoder::getFlash(const QList<BadgeMessage> &messages)
 {
-    return toHex(QByteArray(1, message.flash ? char(0x01) : char(0x00)));
+    int flash = 0;
+    for (int index = 0; index < messages.size() && index < kMaxMessages; ++index) {
+        if (messages.at(index).flash) {
+            flash |= (0x01 << index);
+        }
+    }
+
+    return toHex(QByteArray(1, static_cast<char>(flash & 0xFF)));
 }
 
-QString BadgeEncoder::getMarquee(const BadgeMessage &message)
+QString BadgeEncoder::getMarquee(const QList<BadgeMessage> &messages)
 {
-    return toHex(QByteArray(1, message.marquee ? char(0x01) : char(0x00)));
+    int marquee = 0;
+    for (int index = 0; index < messages.size() && index < kMaxMessages; ++index) {
+        if (messages.at(index).marquee) {
+            marquee |= (0x01 << index);
+        }
+    }
+
+    return toHex(QByteArray(1, static_cast<char>(marquee & 0xFF)));
 }
 
-QString BadgeEncoder::getOptions(const BadgeMessage &message)
+QString BadgeEncoder::getOptions(const QList<BadgeMessage> &messages)
 {
-    const int combined = parseHexValue(speedHex(message.speedIndex))
-            | parseHexValue(modeHex(message.modeIndex));
-    QString options = toHex(QByteArray(1, static_cast<char>(combined)));
-    options = options.leftJustified(16, QLatin1Char('0'));
+    QString options;
+    for (int index = 0; index < messages.size() && index < kMaxMessages; ++index) {
+        const BadgeMessage &message = messages.at(index);
+        const int combined = parseHexValue(speedHex(message.speedIndex))
+                | parseHexValue(modeHex(message.modeIndex));
+        options.append(toHex(QByteArray(1, static_cast<char>(combined))));
+    }
+
+    options.append(QStringLiteral("00").repeated(kMaxMessages - qMin(messages.size(), kMaxMessages)));
     return options;
 }
 
-QString BadgeEncoder::getSize(const BadgeMessage &message)
+QString BadgeEncoder::getSizes(const QList<BadgeMessage> &messages)
 {
-    const int length = message.textHex.size();
-    QByteArray bytes;
-    bytes.append(static_cast<char>((length >> 8) & 0xFF));
-    bytes.append(static_cast<char>(length & 0xFF));
+    QString sizes;
+    for (int index = 0; index < messages.size() && index < kMaxMessages; ++index) {
+        const int length = messages.at(index).textHex.size();
+        QByteArray bytes;
+        bytes.append(static_cast<char>((length >> 8) & 0xFF));
+        bytes.append(static_cast<char>(length & 0xFF));
+        sizes.append(toHex(bytes));
+    }
 
-    QString size = toHex(bytes);
-    size = size.leftJustified(32, QLatin1Char('0'));
-    return size;
+    return sizes.leftJustified(kMaxMessages * 4, QLatin1Char('0'));
+}
+
+QString BadgeEncoder::getMessage(const QList<BadgeMessage> &messages)
+{
+    QString payload;
+    for (int index = 0; index < messages.size() && index < kMaxMessages; ++index) {
+        payload.append(messages.at(index).textHex.join(QString()));
+    }
+
+    return payload;
 }
 
 QString BadgeEncoder::getTime()

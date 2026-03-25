@@ -52,6 +52,7 @@ const int kScanTimeoutMs = 16000;
 const int kScanPollIntervalMs = 750;
 const int kResolvePollIntervalMs = 500;
 const int kResolveAttempts = 24;
+const int kWriteAttempts = 3;
 
 QString badgeNotFound()
 {
@@ -147,6 +148,12 @@ QString badgeUpdatedSuccessfully()
 {
     //% "Badge updated successfully."
     return qtTrId("badgemagic-sailfish-la-badge-updated-successfully");
+}
+
+QString writingBadgeDataFailed()
+{
+    //% "Writing badge data failed."
+    return qtTrId("badgemagic-sailfish-la-writing-badge-data-failed");
 }
 
 ManagedObjectList managedBluezObjects()
@@ -410,7 +417,24 @@ void BadgeBleManager::writeNextChunk()
     }
 
     while (m_busy && m_writeIndex < m_pendingChunks.size()) {
-        m_service->writeValue(kBadgeCharacteristicUuid, m_pendingChunks.at(m_writeIndex));
+        bool written = false;
+        QString writeError;
+
+        for (int attempt = 0; attempt < kWriteAttempts; ++attempt) {
+            if (m_service->writeValueChecked(kBadgeCharacteristicUuid,
+                                             m_pendingChunks.at(m_writeIndex),
+                                             &writeError)) {
+                written = true;
+                break;
+            }
+        }
+
+        if (!written) {
+            qWarning() << Q_FUNC_INFO << writeError;
+            finishWithError(writingBadgeDataFailed());
+            return;
+        }
+
         ++m_writeIndex;
     }
 

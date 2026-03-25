@@ -76,6 +76,18 @@ QString deletingSavedBadgeFailed()
     return qtTrId("badgemagic-sailfish-la-deleting-saved-badge-failed");
 }
 
+QString selectSavedBadgeSlotsBeforeSending()
+{
+    //% "Select at least one saved badge slot before sending."
+    return qtTrId("badgemagic-sailfish-la-select-saved-badge-slots-before-sending");
+}
+
+QString tooManySavedBadgeSlotsSelected()
+{
+    //% "You can send up to 8 saved badge slots at once."
+    return qtTrId("badgemagic-sailfish-la-too-many-saved-badge-slots-selected");
+}
+
 }
 
 BadgeApp::BadgeApp(QObject *parent)
@@ -192,6 +204,39 @@ void BadgeApp::sendSavedBadge(int index)
 
     setLastError(QString());
     m_bleManager.sendChunks(BadgeEncoder::buildTransferChunks(messageFromVariant(m_savedBadges.at(index).toMap())));
+}
+
+void BadgeApp::sendSavedBadgeSlots(const QVariantList &indexes)
+{
+    if (indexes.isEmpty()) {
+        setStatusMessage(QString());
+        setLastError(selectSavedBadgeSlotsBeforeSending());
+        return;
+    }
+
+    if (indexes.size() > 8) {
+        setStatusMessage(QString());
+        setLastError(tooManySavedBadgeSlotsSelected());
+        return;
+    }
+
+    QList<BadgeMessage> messages;
+    messages.reserve(indexes.size());
+
+    for (const QVariant &value : indexes) {
+        bool ok = false;
+        const int index = value.toInt(&ok);
+        if (!ok || index < 0 || index >= m_savedBadges.size()) {
+            setStatusMessage(QString());
+            setLastError(selectedSavedBadgeUnavailable());
+            return;
+        }
+
+        messages.append(messageFromVariant(m_savedBadges.at(index).toMap()));
+    }
+
+    setLastError(QString());
+    m_bleManager.sendChunks(BadgeEncoder::buildTransferChunks(messages));
 }
 
 bool BadgeApp::deleteSavedBadge(int index)

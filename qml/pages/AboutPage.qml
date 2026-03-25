@@ -29,7 +29,7 @@ Page {
     readonly property string aboutText: qsTrId("badgemagic-sailfish-la-about")
     //% "Badge Magic for SailfishOS is a native SailfishOS port based on the original Badge Magic application by FOSSASIA and its LED badge protocol."
     readonly property string descriptionText: qsTrId("badgemagic-sailfish-la-about-description")
-    //% "The Sailfish target focuses on composing text badges, saving JSON presets, and sending them over BLE to badges advertising service FEE0 and writable characteristic FEE1."
+    //% "The Sailfish target focuses on composing text badges, saving JSON presets, and sending them over BLE to badges advertising service FEE0 and writable characteristic FEE1. Saved badges can also be transferred together into the badge's message slots for hardware button cycling."
     readonly property string protocolText: qsTrId("badgemagic-sailfish-la-about-protocol")
     //% "Credits to FOSSASIA for the original Badge Magic application, the badge protocol implementation, and the upstream project on which this SailfishOS port is based."
     readonly property string acknowledgementsText: qsTrId("badgemagic-sailfish-la-about-acknowledgements")

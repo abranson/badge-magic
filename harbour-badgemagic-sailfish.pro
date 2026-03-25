@@ -57,6 +57,7 @@ DISTFILES += \
     icons/128x128/harbour-badgemagic-sailfish.png \
     icons/172x172/harbour-badgemagic-sailfish.png \
     qml/harbour-badgemagic-sailfish.qml \
+    qml/components/BadgeStatusDisplay.qml \
     qml/cover/background.png \
     qml/pages/AboutPage.qml \
     qml/pages/MainPage.qml \

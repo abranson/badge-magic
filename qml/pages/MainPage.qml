@@ -21,6 +21,7 @@
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import "../components"
 
 Page {
     id: page
@@ -75,7 +76,7 @@ Page {
     readonly property string sendToBadgeText: qsTrId("badgemagic-sailfish-la-send-to-badge")
     //% "Save badge"
     readonly property string saveBadgeText: qsTrId("badgemagic-sailfish-la-save-badge")
-    //% "This SailfishOS version covers the core text-badge workflow with native BLE transfer and shared JSON badge presets."
+    //% "This SailfishOS version covers the core text-badge workflow, including multi-message slot transfer from saved badges, with native BLE transfer and shared JSON badge presets."
     readonly property string summaryText: qsTrId("badgemagic-sailfish-la-main-summary")
 
     property var modeLabels: [
@@ -218,22 +219,11 @@ Page {
                 }
             }
 
-            Label {
+            BadgeStatusDisplay {
                 width: parent.width - (Theme.horizontalPageMargin * 2)
                 anchors.horizontalCenter: parent.horizontalCenter
-                color: Theme.highlightColor
-                visible: badgeApp.statusMessage.length > 0
-                text: badgeApp.statusMessage
-                wrapMode: Text.Wrap
-            }
-
-            Label {
-                width: parent.width - (Theme.horizontalPageMargin * 2)
-                anchors.horizontalCenter: parent.horizontalCenter
-                color: Theme.errorColor
-                visible: badgeApp.lastError.length > 0
-                text: badgeApp.lastError
-                wrapMode: Text.Wrap
+                statusMessage: badgeApp.statusMessage
+                lastError: badgeApp.lastError
             }
 
             Label {
