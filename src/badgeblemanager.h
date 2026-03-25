@@ -55,6 +55,8 @@ private slots:
     void handleScanPollTimeout();
     void handleScanTimeout();
     void handleResolveTimeout();
+    void handleCharacteristicWritten(const QString &characteristic, const QByteArray &value);
+    void handleCharacteristicWriteFailed(const QString &characteristic, const QString &errorMessage);
     void handleDevicePropertiesChanged(const QString &interface,
                                        const QVariantMap &map,
                                        const QStringList &list);
@@ -77,7 +79,9 @@ private:
     bool matchesBadgeCharacteristicUuid(const QString &uuid) const;
 
     bool m_busy = false;
+    int m_connectAttempts = 0;
     int m_writeIndex = 0;
+    int m_writeAttempts = 0;
     int m_resolveAttempts = 0;
     QList<QByteArray> m_pendingChunks;
     QString m_adapterPath;

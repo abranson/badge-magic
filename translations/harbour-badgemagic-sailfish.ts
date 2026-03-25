@@ -104,10 +104,6 @@
         <source>Save badge</source>
         <translation type="unfinished"></translation>
     </message>
-    <message id="badgemagic-sailfish-la-main-summary">
-        <source>This SailfishOS version covers the core text-badge workflow, including multi-message slot transfer from saved badges, with native BLE transfer and shared JSON badge presets.</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message id="badgemagic-sailfish-la-no-saved-badges">
         <source>No saved badges yet</source>
         <translation type="unfinished"></translation>
@@ -250,6 +246,10 @@
     </message>
     <message id="badgemagic-sailfish-la-about-fossasia-repository">
         <source>FOSSASIA repository: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="badgemagic-sailfish-la-about-version">
+        <source>Version %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message id="badgemagic-sailfish-la-select-saved-badge-slots-before-sending">

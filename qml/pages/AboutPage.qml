@@ -35,6 +35,8 @@ Page {
     readonly property string acknowledgementsText: qsTrId("badgemagic-sailfish-la-about-acknowledgements")
     //% "FOSSASIA repository: %1"
     readonly property string repositoryText: qsTrId("badgemagic-sailfish-la-about-fossasia-repository")
+    //% "Version %1"
+    readonly property string versionText: qsTrId("badgemagic-sailfish-la-about-version")
 
     SilicaFlickable {
         anchors.fill: parent
@@ -63,6 +65,14 @@ Page {
                 x: Theme.horizontalPageMargin
                 wrapMode: Text.Wrap
                 text: page.descriptionText
+            }
+
+            Label {
+                width: parent.width - (Theme.horizontalPageMargin * 2)
+                x: Theme.horizontalPageMargin
+                color: Theme.highlightColor
+                text: page.versionText.arg(appVersion)
+                wrapMode: Text.Wrap
             }
 
             Label {

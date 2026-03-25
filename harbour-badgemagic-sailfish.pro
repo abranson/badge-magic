@@ -20,6 +20,7 @@
 #
 
 TARGET = harbour-badgemagic-sailfish
+VERSION = 0.3.0
 
 QT += dbus qml quick
 
@@ -49,6 +50,7 @@ HEADERS += \
     src/badgestore.h
 
 INCLUDEPATH += src qble
+DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 DISTFILES += \
     harbour-badgemagic-sailfish.desktop \
@@ -64,6 +66,7 @@ DISTFILES += \
     qml/pages/SavedBadgesPage.qml \
     qml/cover/CoverPage.qml \
     rpm/harbour-badgemagic-sailfish.spec \
+    rpm/harbour-badgemagic-sailfish.changes \
     translations/harbour-badgemagic-sailfish.ts \
     README.md
 

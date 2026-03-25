@@ -52,7 +52,12 @@ const int kScanTimeoutMs = 16000;
 const int kScanPollIntervalMs = 750;
 const int kResolvePollIntervalMs = 500;
 const int kResolveAttempts = 24;
+const int kConnectAttempts = 3;
+const int kConnectDelayMs = 250;
+const int kConnectRetryDelayMs = 750;
 const int kWriteAttempts = 3;
+const int kWriteNextChunkDelayMs = 20;
+const int kWriteRetryDelayMs = 80;
 
 QString badgeNotFound()
 {
@@ -178,6 +183,14 @@ QString lowerUuid(const QString &uuid)
     return uuid.toLower();
 }
 
+bool isTransientConnectError(const QString &message)
+{
+    const QString lowered = message.toLower();
+    return lowered.contains(QStringLiteral("le-connection-abort-by-local"))
+            || lowered.contains(QStringLiteral("doesn't exist"))
+            || lowered.contains(QStringLiteral("not connected"));
+}
+
 } // namespace
 
 BadgeBleManager::BadgeBleManager(QObject *parent)
@@ -219,8 +232,10 @@ void BadgeBleManager::sendChunks(const QList<QByteArray> &chunks)
     }
 
     resetConnection();
+    m_connectAttempts = 0;
     m_pendingChunks = chunks;
     m_writeIndex = 0;
+    m_writeAttempts = 0;
     m_resolveAttempts = 0;
     setBusy(true);
 
@@ -266,6 +281,36 @@ void BadgeBleManager::handleResolveTimeout()
     attemptResolveService();
 }
 
+void BadgeBleManager::handleCharacteristicWritten(const QString &characteristic, const QByteArray &value)
+{
+    Q_UNUSED(value)
+
+    if (!m_busy || !matchesBadgeCharacteristicUuid(characteristic)) {
+        return;
+    }
+
+    ++m_writeIndex;
+    m_writeAttempts = 0;
+    QTimer::singleShot(kWriteNextChunkDelayMs, this, &BadgeBleManager::writeNextChunk);
+}
+
+void BadgeBleManager::handleCharacteristicWriteFailed(const QString &characteristic,
+                                                      const QString &errorMessage)
+{
+    if (!m_busy || !matchesBadgeCharacteristicUuid(characteristic)) {
+        return;
+    }
+
+    ++m_writeAttempts;
+    if (m_writeAttempts < kWriteAttempts) {
+        QTimer::singleShot(kWriteRetryDelayMs, this, &BadgeBleManager::writeNextChunk);
+        return;
+    }
+
+    qWarning() << Q_FUNC_INFO << errorMessage;
+    finishWithError(writingBadgeDataFailed());
+}
+
 void BadgeBleManager::handleDevicePropertiesChanged(const QString &interface,
                                                     const QVariantMap &map,
                                                     const QStringList &list)
@@ -296,11 +341,23 @@ void BadgeBleManager::handleDevicePropertiesChanged(const QString &interface,
 
 void BadgeBleManager::handleDeviceError(const QString &message)
 {
-    Q_UNUSED(message)
-
-    if (m_busy) {
-        finishWithError(bluetoothConnectionFailed());
+    if (!m_busy) {
+        return;
     }
+
+    if (!m_devicePath.isEmpty() && m_connectAttempts < kConnectAttempts && isTransientConnectError(message)) {
+        const QString devicePath = m_devicePath;
+        QTimer::singleShot(kConnectRetryDelayMs, this, [this, devicePath]() {
+            if (!m_busy || m_devicePath != devicePath) {
+                return;
+            }
+
+            connectToDevicePath(devicePath);
+        });
+        return;
+    }
+
+    finishWithError(bluetoothConnectionFailed());
 }
 
 void BadgeBleManager::beginDiscovery()
@@ -356,12 +413,31 @@ void BadgeBleManager::connectToDevicePath(const QString &devicePath)
     const ManagedObjectList objects = managedBluezObjects();
     const QVariantMap deviceProperties = objects.value(QDBusObjectPath(devicePath))
             .value(QString::fromLatin1(kBluezDeviceInterface));
-    if (deviceProperties.value(QStringLiteral("Connected")).toBool()) {
+    if (deviceProperties.value(QStringLiteral("Connected")).toBool()
+            || deviceProperties.value(QStringLiteral("ServicesResolved")).toBool()
+            || !findBadgeServicePath().isEmpty()) {
         attemptResolveService();
         return;
     }
 
-    m_device->connectToDevice();
+    ++m_connectAttempts;
+    QTimer::singleShot(kConnectDelayMs, this, [this, devicePath]() {
+        if (!m_busy || m_device == nullptr || m_devicePath != devicePath) {
+            return;
+        }
+
+        const ManagedObjectList objects = managedBluezObjects();
+        const QVariantMap deviceProperties = objects.value(QDBusObjectPath(devicePath))
+                .value(QString::fromLatin1(kBluezDeviceInterface));
+        if (deviceProperties.value(QStringLiteral("Connected")).toBool()
+                || deviceProperties.value(QStringLiteral("ServicesResolved")).toBool()
+                || !findBadgeServicePath().isEmpty()) {
+            attemptResolveService();
+            return;
+        }
+
+        m_device->connectToDevice();
+    });
 }
 
 void BadgeBleManager::attemptResolveService()
@@ -378,6 +454,10 @@ void BadgeBleManager::attemptResolveService()
             }
 
             m_service = new QBLEService(kBadgeServiceUuid, servicePath, this);
+            connect(m_service, &QBLEService::characteristicWritten,
+                    this, &BadgeBleManager::handleCharacteristicWritten);
+            connect(m_service, &QBLEService::characteristicWriteFailed,
+                    this, &BadgeBleManager::handleCharacteristicWriteFailed);
         }
 
         if (m_service->characteristic(kBadgeCharacteristicUuid) != nullptr) {
@@ -406,7 +486,7 @@ void BadgeBleManager::writeNextChunk()
         return;
     }
 
-    if (m_writeIndex < 0 || m_writeIndex >= m_pendingChunks.size()) {
+    if (m_writeIndex < 0 || m_writeIndex > m_pendingChunks.size()) {
         finishWithError(transferQueueOutOfRange());
         return;
     }
@@ -416,30 +496,13 @@ void BadgeBleManager::writeNextChunk()
         return;
     }
 
-    while (m_busy && m_writeIndex < m_pendingChunks.size()) {
-        bool written = false;
-        QString writeError;
-
-        for (int attempt = 0; attempt < kWriteAttempts; ++attempt) {
-            if (m_service->writeValueChecked(kBadgeCharacteristicUuid,
-                                             m_pendingChunks.at(m_writeIndex),
-                                             &writeError)) {
-                written = true;
-                break;
-            }
-        }
-
-        if (!written) {
-            qWarning() << Q_FUNC_INFO << writeError;
-            finishWithError(writingBadgeDataFailed());
-            return;
-        }
-
-        ++m_writeIndex;
+    if (m_writeIndex == m_pendingChunks.size()) {
+        finishTransferSuccessfully();
+        return;
     }
 
-    if (m_busy) {
-        finishTransferSuccessfully();
+    if (!m_service->writeAsyncChecked(kBadgeCharacteristicUuid, m_pendingChunks.at(m_writeIndex))) {
+        finishWithError(writingBadgeDataFailed());
     }
 }
 
@@ -452,7 +515,9 @@ void BadgeBleManager::finishTransferSuccessfully()
     }
     setBusy(false);
     m_pendingChunks.clear();
+    m_connectAttempts = 0;
     m_writeIndex = 0;
+    m_writeAttempts = 0;
     emit transferFinished();
 }
 
@@ -484,6 +549,7 @@ void BadgeBleManager::resetConnection()
 
     m_pendingChunks.clear();
     m_writeIndex = 0;
+    m_writeAttempts = 0;
     m_resolveAttempts = 0;
     m_devicePath.clear();
 }

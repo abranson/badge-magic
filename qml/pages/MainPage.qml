@@ -76,9 +76,6 @@ Page {
     readonly property string sendToBadgeText: qsTrId("badgemagic-sailfish-la-send-to-badge")
     //% "Save badge"
     readonly property string saveBadgeText: qsTrId("badgemagic-sailfish-la-save-badge")
-    //% "This SailfishOS version covers the core text-badge workflow, including multi-message slot transfer from saved badges, with native BLE transfer and shared JSON badge presets."
-    readonly property string summaryText: qsTrId("badgemagic-sailfish-la-main-summary")
-
     property var modeLabels: [
         modeLeftText,
         modeRightText,
@@ -224,14 +221,6 @@ Page {
                 anchors.horizontalCenter: parent.horizontalCenter
                 statusMessage: badgeApp.statusMessage
                 lastError: badgeApp.lastError
-            }
-
-            Label {
-                width: parent.width - (Theme.horizontalPageMargin * 2)
-                anchors.horizontalCenter: parent.horizontalCenter
-                color: Theme.secondaryHighlightColor
-                text: page.summaryText
-                wrapMode: Text.Wrap
             }
 
             Item {

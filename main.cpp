@@ -53,11 +53,13 @@ void installAppTranslator(QGuiApplication *application)
 int main(int argc, char *argv[])
 {
     QGuiApplication *application = SailfishApp::application(argc, argv);
+    application->setApplicationVersion(QStringLiteral(APP_VERSION));
     installAppTranslator(application);
     BadgeApp badgeApp;
 
     QQuickView *view = SailfishApp::createView();
     view->rootContext()->setContextProperty(QStringLiteral("badgeApp"), &badgeApp);
+    view->rootContext()->setContextProperty(QStringLiteral("appVersion"), application->applicationVersion());
     view->setSource(SailfishApp::pathTo(QStringLiteral("qml/harbour-badgemagic-sailfish.qml")));
     view->show();
 
