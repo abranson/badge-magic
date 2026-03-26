@@ -1,0 +1,17 @@
+* Wed Mar 25 2026 Andrew Branson <dev@andrewbranson.net> 0.3.0-1
+- Add message slot transfer for up to 8 saved badges
+- Add slot selection workflow on the Saved badges page
+- Share transfer status UI between the main and saved badges pages
+- Show the app version on the About page
+- Improve Saved badges context menu layout and transfer feedback
+- Switch BLE chunk transfer to async writes with retries and pacing
+- Improve badge discovery and reconnect handling around transient BlueZ failures
+
+* Wed Mar 18 2026 Andrew Branson <dev@andrewbranson.net> 0.2.0-1
+- Vendor qble and add native BLE transfer support
+
+* Tue Mar 17 2026 Andrew Branson <dev@andrewbranson.net> 0.1.1-1
+- Add SailfishOS:Chum metadata
+
+* Tue Mar 17 2026 Andrew Branson <dev@andrewbranson.net> 0.1.0-1
+- Initial release

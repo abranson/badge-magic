@@ -1,10 +1,9 @@
-/.mb2/
-/build/
-/RPMS/
-/SRPMS/
+/.mb2
+/build
+/RPMS
 /harbour-badgemagic-sailfish
-/Makefile
-/moc_*.cpp
-/*.o
-/documentation.list
+Makefile
+moc_*.cpp
+*.o
+/*.list
 /translations/*.qm

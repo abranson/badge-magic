@@ -1,6 +1,6 @@
 Name:       harbour-badgemagic-sailfish
 Summary:    Badge Magic for SailfishOS
-Version:    0.1.0
+Version:    0.3.0
 Release:    1
 License:    ASL 2.0
 Group:      Qt/Qt
