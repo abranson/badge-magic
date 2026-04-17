@@ -1,8 +1,8 @@
 #
-# SPDX-FileCopyrightText: 2026 Badge Magic for SailfishOS contributors
+# SPDX-FileCopyrightText: 2026 Andrew Branson
 # SPDX-License-Identifier: Apache-2.0
 #
-# Copyright (C) 2026 Badge Magic for SailfishOS contributors
+# Copyright (C) 2026 Andrew Branson
 #
 # Based on the original Badge Magic application by FOSSASIA.
 #
@@ -20,7 +20,7 @@
 #
 
 TARGET = harbour-badgemagic-sailfish
-VERSION = 0.3.0
+VERSION = 0.4.0
 
 QT += dbus qml quick
 
@@ -41,12 +41,14 @@ SOURCES += \
     src/badgeapp.cpp \
     src/badgeblemanager.cpp \
     src/badgeencoder.cpp \
+    src/badgepreviewitem.cpp \
     src/badgestore.cpp
 
 HEADERS += \
     src/badgeapp.h \
     src/badgeblemanager.h \
     src/badgeencoder.h \
+    src/badgepreviewitem.h \
     src/badgestore.h
 
 INCLUDEPATH += src qble

@@ -1,3 +1,7 @@
+* Fri Apr 17 2026 Andrew Branson <dev@andrewbranson.net> 0.4.0-1
+- Add a live badge preview with animation rendering
+- Add persistent preview LED color selection
+
 * Wed Mar 25 2026 Andrew Branson <dev@andrewbranson.net> 0.3.0-1
 - Add message slot transfer for up to 8 saved badges
 - Add slot selection workflow on the Saved badges page

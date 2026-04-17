@@ -96,12 +96,36 @@
         <source>Mode</source>
         <translation type="unfinished"></translation>
     </message>
+    <message id="badgemagic-sailfish-la-preview-color">
+        <source>Preview color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="badgemagic-sailfish-la-preview-color-red">
+        <source>Red</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="badgemagic-sailfish-la-preview-color-green">
+        <source>Green</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="badgemagic-sailfish-la-preview-color-blue">
+        <source>Blue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="badgemagic-sailfish-la-preview-color-white">
+        <source>White</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message id="badgemagic-sailfish-la-send-to-badge">
         <source>Send to badge</source>
         <translation type="unfinished"></translation>
     </message>
     <message id="badgemagic-sailfish-la-save-badge">
         <source>Save badge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="badgemagic-sailfish-la-badge-preview">
+        <source>Badge preview</source>
         <translation type="unfinished"></translation>
     </message>
     <message id="badgemagic-sailfish-la-no-saved-badges">
@@ -236,10 +260,6 @@
         <source>Badge Magic for SailfishOS is a native SailfishOS port based on the original Badge Magic application by FOSSASIA and its LED badge protocol.</source>
         <translation type="unfinished"></translation>
     </message>
-    <message id="badgemagic-sailfish-la-about-protocol">
-        <source>The Sailfish target focuses on composing text badges, saving JSON presets, and sending them over BLE to badges advertising service FEE0 and writable characteristic FEE1. Saved badges can also be transferred together into the badge&apos;s message slots for hardware button cycling.</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message id="badgemagic-sailfish-la-about-acknowledgements">
         <source>Credits to FOSSASIA for the original Badge Magic application, the badge protocol implementation, and the upstream project on which this SailfishOS port is based.</source>
         <translation type="unfinished"></translation>
@@ -250,6 +270,14 @@
     </message>
     <message id="badgemagic-sailfish-la-about-version">
         <source>Version %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="badgemagic-sailfish-la-about-hero-title">
+        <source>BADGE MAGIC</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message id="badgemagic-sailfish-la-about-hero-subtitle">
+        <source>SFOS Edition</source>
         <translation type="unfinished"></translation>
     </message>
     <message id="badgemagic-sailfish-la-select-saved-badge-slots-before-sending">

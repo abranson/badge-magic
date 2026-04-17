@@ -1,8 +1,8 @@
 /*
- * SPDX-FileCopyrightText: 2026 Badge Magic for SailfishOS contributors
+ * SPDX-FileCopyrightText: 2026 Andrew Branson
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright (C) 2026 Badge Magic for SailfishOS contributors
+ * Copyright (C) 2026 Andrew Branson
  *
  * Based on the original Badge Magic application by FOSSASIA.
  *
@@ -22,6 +22,9 @@
 #include "badgeapp.h"
 
 #include <QCoreApplication>
+#include <QDir>
+#include <QSettings>
+#include <QStandardPaths>
 #include <QVariantMap>
 
 #include "badgeencoder.h"
@@ -88,10 +91,36 @@ QString tooManySavedBadgeSlotsSelected()
     return qtTrId("badgemagic-sailfish-la-too-many-saved-badge-slots-selected");
 }
 
+constexpr int kPreviewColorCount = 4;
+const char kPreviewColorSettingsDir[] = "org.fossasia/BadgeMagicSailfish";
+const char kPreviewColorSettingsFile[] = "settings.ini";
+const char kPreviewColorSettingsKey[] = "preview/colorIndex";
+
+int safePreviewColorIndex(int previewColorIndex)
+{
+    return qBound(0, previewColorIndex, kPreviewColorCount - 1);
+}
+
+QString previewSettingsPath()
+{
+    const QString configRoot = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)
+            + QLatin1Char('/')
+            + QString::fromLatin1(kPreviewColorSettingsDir);
+    QDir().mkpath(configRoot);
+    return configRoot + QLatin1Char('/') + QString::fromLatin1(kPreviewColorSettingsFile);
+}
+
+int loadPreviewColorIndex()
+{
+    QSettings settings(previewSettingsPath(), QSettings::IniFormat);
+    return safePreviewColorIndex(settings.value(QString::fromLatin1(kPreviewColorSettingsKey), 0).toInt());
+}
+
 }
 
 BadgeApp::BadgeApp(QObject *parent)
     : QObject(parent)
+    , m_previewColorIndex(loadPreviewColorIndex())
 {
     connect(&m_bleManager, &BadgeBleManager::busyChanged, this, &BadgeApp::busyChanged);
     connect(&m_bleManager, &BadgeBleManager::statusChanged, this, [this](const QString &status) {
@@ -124,6 +153,26 @@ QString BadgeApp::lastError() const
 QVariantList BadgeApp::savedBadges() const
 {
     return m_savedBadges;
+}
+
+int BadgeApp::previewColorIndex() const
+{
+    return m_previewColorIndex;
+}
+
+void BadgeApp::setPreviewColorIndex(int previewColorIndex)
+{
+    const int safeIndex = safePreviewColorIndex(previewColorIndex);
+    if (m_previewColorIndex == safeIndex) {
+        return;
+    }
+
+    m_previewColorIndex = safeIndex;
+
+    QSettings settings(previewSettingsPath(), QSettings::IniFormat);
+    settings.setValue(QString::fromLatin1(kPreviewColorSettingsKey), m_previewColorIndex);
+
+    emit previewColorIndexChanged();
 }
 
 void BadgeApp::sendTextBadge(const QString &text,

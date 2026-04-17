@@ -1,8 +1,8 @@
 /*
- * SPDX-FileCopyrightText: 2026 Badge Magic for SailfishOS contributors
+ * SPDX-FileCopyrightText: 2026 Andrew Branson
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright (C) 2026 Badge Magic for SailfishOS contributors
+ * Copyright (C) 2026 Andrew Branson
  *
  * Based on the original Badge Magic application by FOSSASIA.
  *
@@ -35,6 +35,7 @@ class BadgeApp : public QObject
     Q_PROPERTY(QString statusMessage READ statusMessage NOTIFY statusMessageChanged)
     Q_PROPERTY(QString lastError READ lastError NOTIFY lastErrorChanged)
     Q_PROPERTY(QVariantList savedBadges READ savedBadges NOTIFY savedBadgesChanged)
+    Q_PROPERTY(int previewColorIndex READ previewColorIndex WRITE setPreviewColorIndex NOTIFY previewColorIndexChanged)
 
 public:
     explicit BadgeApp(QObject *parent = nullptr);
@@ -43,6 +44,8 @@ public:
     QString statusMessage() const;
     QString lastError() const;
     QVariantList savedBadges() const;
+    int previewColorIndex() const;
+    void setPreviewColorIndex(int previewColorIndex);
 
     Q_INVOKABLE void sendTextBadge(const QString &text,
                                    bool flash,
@@ -65,6 +68,7 @@ signals:
     void statusMessageChanged();
     void lastErrorChanged();
     void savedBadgesChanged();
+    void previewColorIndexChanged();
 
 private:
     void reloadSavedBadges();
@@ -81,6 +85,7 @@ private:
     QString m_statusMessage;
     QString m_lastError;
     QVariantList m_savedBadges;
+    int m_previewColorIndex = 0;
 
     BadgeStore m_store;
     BadgeBleManager m_bleManager;

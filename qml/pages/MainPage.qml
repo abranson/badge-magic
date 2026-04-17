@@ -1,8 +1,8 @@
 /*
- * SPDX-FileCopyrightText: 2026 Badge Magic for SailfishOS contributors
+ * SPDX-FileCopyrightText: 2026 Andrew Branson
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright (C) 2026 Badge Magic for SailfishOS contributors
+ * Copyright (C) 2026 Andrew Branson
  *
  * Based on the original Badge Magic application by FOSSASIA.
  *
@@ -21,6 +21,7 @@
 
 import QtQuick 2.0
 import Sailfish.Silica 1.0
+import Harbour.BadgeMagic 1.0
 import "../components"
 
 Page {
@@ -70,12 +71,24 @@ Page {
     readonly property string speedText: qsTrId("badgemagic-sailfish-la-speed")
     //% "Mode"
     readonly property string modeText: qsTrId("badgemagic-sailfish-la-mode")
+    //% "Preview color"
+    readonly property string previewColorText: qsTrId("badgemagic-sailfish-la-preview-color")
+    //% "Red"
+    readonly property string previewColorRedText: qsTrId("badgemagic-sailfish-la-preview-color-red")
+    //% "Green"
+    readonly property string previewColorGreenText: qsTrId("badgemagic-sailfish-la-preview-color-green")
+    //% "Blue"
+    readonly property string previewColorBlueText: qsTrId("badgemagic-sailfish-la-preview-color-blue")
+    //% "White"
+    readonly property string previewColorWhiteText: qsTrId("badgemagic-sailfish-la-preview-color-white")
     //% "Sending…"
     readonly property string sendingText: qsTrId("badgemagic-sailfish-la-sending")
     //% "Send to badge"
     readonly property string sendToBadgeText: qsTrId("badgemagic-sailfish-la-send-to-badge")
     //% "Save badge"
     readonly property string saveBadgeText: qsTrId("badgemagic-sailfish-la-save-badge")
+    //% "Badge preview"
+    readonly property string badgePreviewText: qsTrId("badgemagic-sailfish-la-badge-preview")
     property var modeLabels: [
         modeLeftText,
         modeRightText,
@@ -88,6 +101,13 @@ Page {
         modeLaserText
     ]
     property var speedLabels: ["1", "2", "3", "4", "5", "6", "7", "8"]
+    property var previewColorLabels: [
+        previewColorRedText,
+        previewColorGreenText,
+        previewColorBlueText,
+        previewColorWhiteText
+    ]
+    readonly property bool stickyPreviewActive: formFlickable.contentY > previewSection.y
 
     function applySavedBadge(draft) {
         if (!draft || !draft.hasRawText) {
@@ -103,8 +123,10 @@ Page {
     }
 
     SilicaFlickable {
+        id: formFlickable
         anchors.fill: parent
         contentHeight: contentColumn.height + Theme.paddingLarge
+        contentWidth: width
 
         PullDownMenu {
             MenuItem {
@@ -124,6 +146,26 @@ Page {
 
             PageHeader {
                 title: page.badgeMagicText
+            }
+
+            Item {
+                id: previewSection
+                width: parent.width
+                height: previewInFlow.height
+
+                BadgePreviewItem {
+                    id: previewInFlow
+                    width: parent.width - (Theme.horizontalPageMargin * 2)
+                    height: width / 3.2
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    visible: !page.stickyPreviewActive
+                    text: messageField.text
+                    flash: flashSwitch.checked
+                    marquee: marqueeSwitch.checked
+                    colorIndex: badgeApp.previewColorIndex
+                    speedIndex: speedBox.currentIndex
+                    modeIndex: modeBox.currentIndex
+                }
             }
 
             TextArea {
@@ -183,6 +225,26 @@ Page {
                 }
             }
 
+            ComboBox {
+                id: previewColorBox
+                width: parent.width
+                label: page.previewColorText
+                currentIndex: badgeApp.previewColorIndex
+                onCurrentIndexChanged: {
+                    if (badgeApp.previewColorIndex !== currentIndex) {
+                        badgeApp.previewColorIndex = currentIndex
+                    }
+                }
+                menu: ContextMenu {
+                    Repeater {
+                        model: previewColorLabels
+                        MenuItem {
+                            text: modelData
+                        }
+                    }
+                }
+            }
+
             Button {
                 width: parent.width - (Theme.horizontalPageMargin * 2)
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -227,6 +289,28 @@ Page {
                 width: 1
                 height: Theme.paddingLarge
             }
+        }
+    }
+
+    Item {
+        id: stickyPreviewContainer
+        visible: page.stickyPreviewActive
+        width: parent.width
+        height: stickyPreview.height
+        z: 2
+
+        BadgePreviewItem {
+            id: stickyPreview
+            width: parent.width - (Theme.horizontalPageMargin * 2)
+            height: width / 3.2
+            anchors.top: parent.top
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: messageField.text
+            flash: flashSwitch.checked
+            marquee: marqueeSwitch.checked
+            colorIndex: badgeApp.previewColorIndex
+            speedIndex: speedBox.currentIndex
+            modeIndex: modeBox.currentIndex
         }
     }
 }

@@ -1,8 +1,8 @@
 /*
- * SPDX-FileCopyrightText: 2026 Badge Magic for SailfishOS contributors
+ * SPDX-FileCopyrightText: 2026 Andrew Branson
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright (C) 2026 Badge Magic for SailfishOS contributors
+ * Copyright (C) 2026 Andrew Branson
  *
  * Based on the original Badge Magic application by FOSSASIA.
  *
@@ -22,11 +22,13 @@
 #include <QGuiApplication>
 #include <QLocale>
 #include <QQmlContext>
+#include <QQmlEngine>
 #include <QQuickView>
 #include <QTranslator>
 #include <sailfishapp.h>
 
 #include "src/badgeapp.h"
+#include "src/badgepreviewitem.h"
 
 namespace {
 
@@ -55,6 +57,7 @@ int main(int argc, char *argv[])
     QGuiApplication *application = SailfishApp::application(argc, argv);
     application->setApplicationVersion(QStringLiteral(APP_VERSION));
     installAppTranslator(application);
+    qmlRegisterType<BadgePreviewItem>("Harbour.BadgeMagic", 1, 0, "BadgePreviewItem");
     BadgeApp badgeApp;
 
     QQuickView *view = SailfishApp::createView();

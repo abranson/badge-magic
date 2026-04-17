@@ -1,8 +1,8 @@
 /*
- * SPDX-FileCopyrightText: 2026 Badge Magic for SailfishOS contributors
+ * SPDX-FileCopyrightText: 2026 Andrew Branson
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright (C) 2026 Badge Magic for SailfishOS contributors
+ * Copyright (C) 2026 Andrew Branson
  *
  * Based on the original Badge Magic application by FOSSASIA.
  *
@@ -29,14 +29,16 @@ Page {
     readonly property string aboutText: qsTrId("badgemagic-sailfish-la-about")
     //% "Badge Magic for SailfishOS is a native SailfishOS port based on the original Badge Magic application by FOSSASIA and its LED badge protocol."
     readonly property string descriptionText: qsTrId("badgemagic-sailfish-la-about-description")
-    //% "The Sailfish target focuses on composing text badges, saving JSON presets, and sending them over BLE to badges advertising service FEE0 and writable characteristic FEE1. Saved badges can also be transferred together into the badge's message slots for hardware button cycling."
-    readonly property string protocolText: qsTrId("badgemagic-sailfish-la-about-protocol")
     //% "Credits to FOSSASIA for the original Badge Magic application, the badge protocol implementation, and the upstream project on which this SailfishOS port is based."
     readonly property string acknowledgementsText: qsTrId("badgemagic-sailfish-la-about-acknowledgements")
     //% "FOSSASIA repository: %1"
     readonly property string repositoryText: qsTrId("badgemagic-sailfish-la-about-fossasia-repository")
     //% "Version %1"
     readonly property string versionText: qsTrId("badgemagic-sailfish-la-about-version")
+    //% "BADGE MAGIC"
+    readonly property string heroTitleText: qsTrId("badgemagic-sailfish-la-about-hero-title")
+    //% "SFOS Edition"
+    readonly property string heroSubtitleText: qsTrId("badgemagic-sailfish-la-about-hero-subtitle")
 
     SilicaFlickable {
         anchors.fill: parent
@@ -51,13 +53,118 @@ Page {
                 title: page.aboutText
             }
 
-            Image {
+            Item {
+                id: heroBlock
+
                 width: Math.min(parent.width - (Theme.horizontalPageMargin * 4), Theme.itemSizeHuge * 2)
                 height: width
                 anchors.horizontalCenter: parent.horizontalCenter
-                source: "../cover/background.png"
-                fillMode: Image.PreserveAspectFit
-                smooth: true
+
+                Image {
+                    anchors.fill: parent
+                    source: "../cover/background.png"
+                    fillMode: Image.PreserveAspectFit
+                    smooth: true
+                }
+
+                Item {
+                    id: heroText
+
+                    width: page.width
+                    height: heroTextColumn.height
+                    anchors.centerIn: parent
+                    transformOrigin: Item.Center
+
+                    SequentialAnimation on rotation {
+                        loops: Animation.Infinite
+                        running: page.status === PageStatus.Active
+
+                        NumberAnimation {
+                            from: -3.5
+                            to: 3.5
+                            duration: 900
+                            easing.type: Easing.InOutSine
+                        }
+                        NumberAnimation {
+                            from: 3.5
+                            to: -2.5
+                            duration: 1000
+                            easing.type: Easing.InOutSine
+                        }
+                        NumberAnimation {
+                            from: -2.5
+                            to: 2
+                            duration: 850
+                            easing.type: Easing.InOutSine
+                        }
+                        NumberAnimation {
+                            from: 2
+                            to: -3.5
+                            duration: 1100
+                            easing.type: Easing.InOutSine
+                        }
+                    }
+
+                    SequentialAnimation on scale {
+                        loops: Animation.Infinite
+                        running: page.status === PageStatus.Active
+
+                        NumberAnimation {
+                            from: 0.98
+                            to: 1.03
+                            duration: 1100
+                            easing.type: Easing.InOutSine
+                        }
+                        NumberAnimation {
+                            from: 1.03
+                            to: 0.99
+                            duration: 1200
+                            easing.type: Easing.InOutSine
+                        }
+                        NumberAnimation {
+                            from: 0.99
+                            to: 0.98
+                            duration: 900
+                            easing.type: Easing.InOutSine
+                        }
+                    }
+
+                    Column {
+                        id: heroTextColumn
+
+                        anchors.centerIn: parent
+                        width: parent.width
+                        spacing: Theme.paddingSmall / 3
+
+                        Text {
+                            width: parent.width
+                            horizontalAlignment: Text.AlignHCenter
+                            text: page.heroTitleText
+                            color: "#fff46b"
+                            style: Text.Outline
+                            styleColor: "#f03a7f"
+                            fontSizeMode: Text.HorizontalFit
+                            minimumPixelSize: Theme.fontSizeLarge
+                            font.bold: true
+                            font.pixelSize: Math.round(heroText.width * 0.23)
+                            font.letterSpacing: 1.2
+                        }
+
+                        Text {
+                            width: parent.width
+                            horizontalAlignment: Text.AlignHCenter
+                            text: page.heroSubtitleText
+                            color: "#7ffbff"
+                            style: Text.Outline
+                            styleColor: "#00466e"
+                            fontSizeMode: Text.HorizontalFit
+                            minimumPixelSize: Theme.fontSizeMedium
+                            font.bold: true
+                            font.pixelSize: Math.round(heroText.width * 0.12)
+                            font.letterSpacing: 0.8
+                        }
+                    }
+                }
             }
 
             Label {
@@ -73,13 +180,6 @@ Page {
                 color: Theme.highlightColor
                 text: page.versionText.arg(appVersion)
                 wrapMode: Text.Wrap
-            }
-
-            Label {
-                width: parent.width - (Theme.horizontalPageMargin * 2)
-                x: Theme.horizontalPageMargin
-                wrapMode: Text.Wrap
-                text: page.protocolText
             }
 
             Label {
