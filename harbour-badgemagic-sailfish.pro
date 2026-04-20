@@ -73,4 +73,5 @@ DISTFILES += \
     README.md
 
 TRANSLATIONS += \
-    translations/harbour-badgemagic-sailfish.ts
+    translations/harbour-badgemagic-sailfish.ts \
+    translations/harbour-badgemagic-sailfish-en_GB.ts \
