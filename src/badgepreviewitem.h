@@ -38,6 +38,7 @@ class BadgePreviewItem : public QQuickPaintedItem
     Q_PROPERTY(int colorIndex READ colorIndex WRITE setColorIndex NOTIFY colorIndexChanged)
     Q_PROPERTY(int speedIndex READ speedIndex WRITE setSpeedIndex NOTIFY speedIndexChanged)
     Q_PROPERTY(int modeIndex READ modeIndex WRITE setModeIndex NOTIFY modeIndexChanged)
+    Q_PROPERTY(bool active READ active WRITE setActive NOTIFY activeChanged)
 
 public:
     explicit BadgePreviewItem(QQuickItem *parent = nullptr);
@@ -48,6 +49,7 @@ public:
     int colorIndex() const;
     int speedIndex() const;
     int modeIndex() const;
+    bool active() const;
 
     void setText(const QString &text);
     void setFlash(bool flash);
@@ -55,6 +57,7 @@ public:
     void setColorIndex(int colorIndex);
     void setSpeedIndex(int speedIndex);
     void setModeIndex(int modeIndex);
+    void setActive(bool active);
 
     void paint(QPainter *painter) override;
 
@@ -65,6 +68,7 @@ signals:
     void colorIndexChanged();
     void speedIndexChanged();
     void modeIndexChanged();
+    void activeChanged();
 
 private:
     using Grid = QVector<QVector<bool>>;
@@ -72,11 +76,13 @@ private:
     void rebuildSourceGrid();
     void renderFrame();
     void updateAnimationInterval();
+    void updateAnimationState();
     static Grid blankGrid(int width = 44);
 
     QString m_text;
     bool m_flash = false;
     bool m_marquee = false;
+    bool m_active = true;
     int m_colorIndex = 0;
     int m_speedIndex = 0;
     int m_modeIndex = 0;

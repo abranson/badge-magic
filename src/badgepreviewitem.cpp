@@ -22,6 +22,7 @@
 #include "badgepreviewitem.h"
 
 #include <QColor>
+#include <QGuiApplication>
 #include <QPainter>
 
 #include "badgeencoder.h"
@@ -423,10 +424,13 @@ BadgePreviewItem::BadgePreviewItem(QQuickItem *parent)
         ++m_animationIndex;
         renderFrame();
     });
+    connect(this, &QQuickItem::visibleChanged, this, &BadgePreviewItem::updateAnimationState);
+    connect(qGuiApp, &QGuiApplication::applicationStateChanged,
+            this, &BadgePreviewItem::updateAnimationState);
 
     updateAnimationInterval();
     renderFrame();
-    m_timer.start();
+    updateAnimationState();
 }
 
 QString BadgePreviewItem::text() const
@@ -459,6 +463,21 @@ int BadgePreviewItem::modeIndex() const
     return m_modeIndex;
 }
 
+bool BadgePreviewItem::active() const
+{
+    return m_active;
+}
+
+void BadgePreviewItem::setActive(bool active)
+{
+    if (m_active == active) {
+        return;
+    }
+    m_active = active;
+    updateAnimationState();
+    emit activeChanged();
+}
+
 void BadgePreviewItem::setText(const QString &text)
 {
     const QString trimmedText = text.trimmed();
@@ -470,6 +489,7 @@ void BadgePreviewItem::setText(const QString &text)
     rebuildSourceGrid();
     m_animationIndex = 0;
     renderFrame();
+    updateAnimationState();
     emit textChanged();
 }
 
@@ -481,6 +501,7 @@ void BadgePreviewItem::setFlash(bool flash)
 
     m_flash = flash;
     renderFrame();
+    updateAnimationState();
     emit flashChanged();
 }
 
@@ -492,6 +513,7 @@ void BadgePreviewItem::setMarquee(bool marquee)
 
     m_marquee = marquee;
     renderFrame();
+    updateAnimationState();
     emit marqueeChanged();
 }
 
@@ -529,6 +551,7 @@ void BadgePreviewItem::setModeIndex(int modeIndex)
     m_modeIndex = safeIndex;
     m_animationIndex = 0;
     renderFrame();
+    updateAnimationState();
     emit modeIndexChanged();
 }
 
@@ -632,6 +655,19 @@ void BadgePreviewItem::renderFrame()
 void BadgePreviewItem::updateAnimationInterval()
 {
     m_timer.setInterval(animationIntervalMs(m_speedIndex));
+}
+
+void BadgePreviewItem::updateAnimationState()
+{
+    const bool animated = (!m_text.isEmpty() && (m_modeIndex != 4 || m_flash)) || m_marquee;
+    const bool running = m_active && isVisible() && animated
+            && QGuiApplication::applicationState() == Qt::ApplicationActive;
+    if (running && !m_timer.isActive()) {
+        renderFrame();
+        m_timer.start();
+    } else if (!running) {
+        m_timer.stop();
+    }
 }
 
 Grid BadgePreviewItem::blankGrid(int width)

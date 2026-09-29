@@ -27,8 +27,10 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QRegularExpression>
+#include <QSaveFile>
 #include <QStandardPaths>
+#include <QUuid>
+#include <algorithm>
 
 namespace {
 
@@ -126,10 +128,17 @@ QVariantList BadgeStore::loadBadges() const
             continue;
         }
 
-        const BadgeMessage message = fromJsonObject(document.object());
-        badges.append(toBadgeMap(fileInfo.absoluteFilePath(), fileInfo.completeBaseName(), message));
+        const QJsonObject root = document.object();
+        const BadgeMessage message = fromJsonObject(root);
+        const QString name = root.value(QStringLiteral("name")).toString(fileInfo.completeBaseName());
+        badges.append(toBadgeMap(fileInfo.absoluteFilePath(), name, message));
     }
 
+    std::sort(badges.begin(), badges.end(), [](const QVariant &left, const QVariant &right) {
+        return QString::compare(left.toMap().value(QStringLiteral("name")).toString(),
+                                right.toMap().value(QStringLiteral("name")).toString(),
+                                Qt::CaseInsensitive) < 0;
+    });
     return badges;
 }
 
@@ -145,17 +154,36 @@ bool BadgeStore::saveBadge(const QString &name, const BadgeMessage &message) con
         return false;
     }
 
-    const QString safeName = trimmedName.simplified().replace(QRegularExpression(QStringLiteral("[^A-Za-z0-9._-]+")),
-                                                              QStringLiteral("_"));
-    QFile file(directory.filePath(safeName + QStringLiteral(".json")));
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+    // Keep same-name updates, including legacy files. Display names must not
+    // be reduced to filenames: punctuation and non-Latin names would collide.
+    QString filePath;
+    for (const QVariant &badge : loadBadges()) {
+        const QVariantMap item = badge.toMap();
+        if (item.value(QStringLiteral("name")).toString() == trimmedName) {
+            filePath = item.value(QStringLiteral("filePath")).toString();
+            break;
+        }
+    }
+    if (filePath.isEmpty()) {
+        do {
+            filePath = directory.filePath(QStringLiteral("badge-")
+                                          + QUuid::createUuid().toString()
+                                          + QStringLiteral(".json"));
+        } while (QFileInfo::exists(filePath));
+    }
+    QSaveFile file(filePath);
+    if (!file.open(QIODevice::WriteOnly)) {
         return false;
     }
 
-    const QJsonDocument document(toJsonObject(message));
-    const qint64 written = file.write(document.toJson(QJsonDocument::Indented));
-    file.close();
-    return written >= 0;
+    QJsonObject root = toJsonObject(message);
+    root.insert(QStringLiteral("name"), trimmedName);
+    const QByteArray data = QJsonDocument(root).toJson(QJsonDocument::Indented);
+    if (file.write(data) != data.size()) {
+        file.cancelWriting();
+        return false;
+    }
+    return file.commit();
 }
 
 bool BadgeStore::deleteBadge(const QString &filePath) const

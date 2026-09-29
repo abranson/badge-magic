@@ -1,3 +1,13 @@
+* Tue Sep 29 2026 Andrew Branson <dev@andrewbranson.net> 0.5.0-1
+- Improve Bluetooth reconnection, transfer sequencing and error recovery
+- Keep Bluetooth operations asynchronous to avoid blocking the interface
+- Prevent saved badge filename collisions and save presets atomically
+- Suspend inactive and static preview animations
+- Replace the speed selector with a slider
+- Add My Backup support for saved badges and app preferences
+- Add host regression tests for transfers, presets and previews
+- Remove older RPMs when publishing package updates
+
 * Fri Apr 17 2026 Andrew Branson <dev@andrewbranson.net> 0.4.0-1
 - Add a live badge preview with animation rendering
 - Add persistent preview LED color selection

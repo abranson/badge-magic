@@ -19,7 +19,7 @@
  * limitations under the License.
  */
 
-import QtQuick 2.0
+import QtQuick 2.6
 import Sailfish.Silica 1.0
 import Harbour.BadgeMagic 1.0
 import "../components"
@@ -100,7 +100,6 @@ Page {
         modeAnimationText,
         modeLaserText
     ]
-    property var speedLabels: ["1", "2", "3", "4", "5", "6", "7", "8"]
     property var previewColorLabels: [
         previewColorRedText,
         previewColorGreenText,
@@ -118,7 +117,7 @@ Page {
         saveNameField.text = draft.name
         flashSwitch.checked = draft.flash
         marqueeSwitch.checked = draft.marquee
-        speedBox.currentIndex = draft.speedIndex
+        speedSlider.value = draft.speedIndex + 1
         modeBox.currentIndex = draft.modeIndex
     }
 
@@ -155,15 +154,17 @@ Page {
 
                 BadgePreviewItem {
                     id: previewInFlow
+
                     width: parent.width - (Theme.horizontalPageMargin * 2)
                     height: width / 3.2
                     anchors.horizontalCenter: parent.horizontalCenter
                     visible: !page.stickyPreviewActive
+                    active: page.status === PageStatus.Active
                     text: messageField.text
                     flash: flashSwitch.checked
                     marquee: marqueeSwitch.checked
                     colorIndex: badgeApp.previewColorIndex
-                    speedIndex: speedBox.currentIndex
+                    speedIndex: speedSlider.speedIndex
                     modeIndex: modeBox.currentIndex
                 }
             }
@@ -195,19 +196,18 @@ Page {
                 description: page.marqueeDescription
             }
 
-            ComboBox {
-                id: speedBox
+            Slider {
+                id: speedSlider
+
+                readonly property int speedIndex: Math.round(sliderValue) - 1
+
                 width: parent.width
                 label: page.speedText
-                currentIndex: 0
-                menu: ContextMenu {
-                    Repeater {
-                        model: speedLabels
-                        MenuItem {
-                            text: modelData
-                        }
-                    }
-                }
+                minimumValue: 1
+                maximumValue: 8
+                stepSize: 1
+                value: 1
+                valueText: sliderValue.toFixed(0)
             }
 
             ComboBox {
@@ -254,7 +254,7 @@ Page {
                                messageField.text,
                                flashSwitch.checked,
                                marqueeSwitch.checked,
-                               speedBox.currentIndex,
+                               speedSlider.speedIndex,
                                modeBox.currentIndex)
             }
 
@@ -269,7 +269,7 @@ Page {
                                 messageField.text,
                                 flashSwitch.checked,
                                 marqueeSwitch.checked,
-                                speedBox.currentIndex,
+                                speedSlider.speedIndex,
                                 modeBox.currentIndex)) {
                         if (saveNameField.text.length === 0) {
                             saveNameField.text = messageField.text.trim().slice(0, 24)
@@ -301,6 +301,8 @@ Page {
 
         BadgePreviewItem {
             id: stickyPreview
+
+            active: page.status === PageStatus.Active
             width: parent.width - (Theme.horizontalPageMargin * 2)
             height: width / 3.2
             anchors.top: parent.top
@@ -309,7 +311,7 @@ Page {
             flash: flashSwitch.checked
             marquee: marqueeSwitch.checked
             colorIndex: badgeApp.previewColorIndex
-            speedIndex: speedBox.currentIndex
+            speedIndex: speedSlider.speedIndex
             modeIndex: modeBox.currentIndex
         }
     }

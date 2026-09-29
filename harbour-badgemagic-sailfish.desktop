@@ -9,3 +9,6 @@ Name=Badge Magic
 OrganizationName=org.fossasia
 ApplicationName=BadgeMagicSailfish
 Permissions=Bluetooth
+
+[X-HarbourBackup]
+BackupPathList=.local/share/org.fossasia/BadgeMagicSailfish/:.config/org.fossasia/BadgeMagicSailfish/

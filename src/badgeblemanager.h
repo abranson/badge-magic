@@ -25,14 +25,11 @@
 #include <QObject>
 #include <QByteArray>
 #include <QList>
-#include <QStringList>
-#include <QVariantMap>
+#include <QTimer>
+#include <QVariant>
+#include <functional>
 
-QT_FORWARD_DECLARE_CLASS(QTimer)
-
-class BluezAdapter;
-class QBLEDevice;
-class QBLEService;
+QT_FORWARD_DECLARE_CLASS(QDBusMessage)
 
 class BadgeBleManager : public QObject
 {
@@ -51,48 +48,32 @@ signals:
     void errorOccurred(const QString &error);
     void transferFinished();
 
-private slots:
-    void handleScanPollTimeout();
-    void handleScanTimeout();
-    void handleResolveTimeout();
-    void handleCharacteristicWritten(const QString &characteristic, const QByteArray &value);
-    void handleCharacteristicWriteFailed(const QString &characteristic, const QString &errorMessage);
-    void handleDevicePropertiesChanged(const QString &interface,
-                                       const QVariantMap &map,
-                                       const QStringList &list);
-    void handleDeviceError(const QString &message);
-
 private:
-    void beginDiscovery();
-    void connectToDevicePath(const QString &devicePath);
-    void attemptResolveService();
-    void writeNextChunk();
-    void finishTransferSuccessfully();
-    void finishWithError(const QString &error);
-    void resetConnection();
-    void setBusy(bool value);
-    void stopDiscovery();
-    QString findPoweredAdapterPath(bool *hasAdapter) const;
-    QString findBadgeDevicePath() const;
-    QString findBadgeServicePath() const;
-    bool matchesBadgeServiceUuid(const QString &uuid) const;
-    bool matchesBadgeCharacteristicUuid(const QString &uuid) const;
+    enum class State { Idle, Scanning, Connecting, Resolving, Writing, Disconnecting };
+    using ReplyHandler = std::function<void(const QDBusMessage &)>;
 
-    bool m_busy = false;
+    void call(const QString &path, const QString &interface, const QString &method,
+              const QList<QVariant> &arguments, const ReplyHandler &handler);
+    void refreshObjects();
+    void startDiscovery();
+    void stopDiscovery(const std::function<void()> &finished);
+    void connectToBadge();
+    void writeNextChunk();
+    void finish(const QString &error = QString());
+    void complete(const QString &error);
+
+    State m_state = State::Idle;
+    quint64 m_generation = 0;
+    bool m_discovering = false;
     int m_connectAttempts = 0;
     int m_writeIndex = 0;
     int m_writeAttempts = 0;
-    int m_resolveAttempts = 0;
     QList<QByteArray> m_pendingChunks;
     QString m_adapterPath;
     QString m_devicePath;
-
-    BluezAdapter *m_adapter = nullptr;
-    QBLEDevice *m_device = nullptr;
-    QBLEService *m_service = nullptr;
-    QTimer *m_scanTimeout = nullptr;
-    QTimer *m_scanPollTimer = nullptr;
-    QTimer *m_resolveTimer = nullptr;
+    QString m_characteristicPath;
+    QTimer m_stepTimer;
+    QTimer m_phaseTimeout;
 };
 
 #endif
